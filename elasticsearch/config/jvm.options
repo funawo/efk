@@ -1,5 +1,5 @@
--Xms128m
--Xmx256m
+-Xms2G
+-Xmx2G
 -XX:+UseConcMarkSweepGC
 -XX:CMSInitiatingOccupancyFraction=75
 -XX:+UseCMSInitiatingOccupancyOnly

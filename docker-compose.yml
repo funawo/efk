@@ -7,5 +7,34 @@ services:
     - "9200:9200"
     volumes:
     - "./elasticsearch/config/jvm.options:/usr/share/elasticsearch/config/jvm.options"
+    - "./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml"
     
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.6.2
+    ports:
+    - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    depends_on:
+    - elasticsearch
 
+  fluentd:
+    build: ./fluentd
+    ports:
+    - "24224:24224"
+    - "24220:24220"
+    - "24224:24224/udp"
+    depends_on:
+    - elasticsearch
+
+  echo:
+    image: chentex/random-logger
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: "localhost:24224"
+        tag: "docker.{{.Name}}"
+    depends_on:
+    - fluentd
+    
+    
